@@ -40,7 +40,7 @@ public class YtDlpNativePlugin extends Plugin {
             // Optional: Update yt-dlp binary asynchronously
             new Thread(() -> {
                 try {
-                    YoutubeDL.getInstance().updateYoutubeDL(getContext(), YoutubeDL.UpdateChannel.STABLE);
+                    YoutubeDL.getInstance().updateYoutubeDL(getContext());
                     Log.d(TAG, "yt-dlp updated to latest stable version");
                 } catch (Exception e) {
                     Log.e(TAG, "Failed to update yt-dlp", e);
