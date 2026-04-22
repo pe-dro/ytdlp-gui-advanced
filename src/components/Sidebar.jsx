@@ -1,10 +1,12 @@
-import { Download, ListVideo, Settings, Terminal, LayoutList } from 'lucide-react';
+import { Download, ListVideo, Settings, Terminal, LayoutList, Sun, Moon } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { useI18n } from '../i18n/index';
+import { useTheme } from '../context/ThemeContext';
 
 export default function Sidebar() {
   const { state, actions } = useApp();
   const { t } = useI18n();
+  const { theme, toggleTheme } = useTheme();
 
   const NAV = [
     { id: 'downloader', icon: Download,    labelKey: 'nav.downloader' },
@@ -49,6 +51,20 @@ export default function Sidebar() {
       })}
 
       <div className="flex-1" />
+
+      {/* Theme toggle */}
+      <button
+        id="nav-theme"
+        onClick={toggleTheme}
+        title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
+        className="w-12 h-12 rounded-xl flex flex-col items-center justify-center gap-0.5 transition-all duration-200
+          text-surface-500 hover:text-surface-200 hover:bg-surface-800/50"
+      >
+        {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+        <span className="text-[9px] font-medium uppercase tracking-wider leading-none">
+          {theme === 'dark' ? 'LIGHT' : 'DARK'}
+        </span>
+      </button>
 
       {/* Console toggle */}
       <button

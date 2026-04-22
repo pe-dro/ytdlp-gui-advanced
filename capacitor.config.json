@@ -1,0 +1,19 @@
+{
+  "appId": "com.ytdlgui.app",
+  "appName": "ytdl-gui",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "buildOptions": {
+      "keystorePath": null,
+      "keystoreAlias": null
+    }
+  },
+  "plugins": {
+    "Filesystem": {
+      "requestPermissions": true
+    }
+  }
+}

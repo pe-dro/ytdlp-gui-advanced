@@ -31,7 +31,8 @@ function getSystemLanguage() {
 }
 
 function getSavedLanguage() {
-  return localStorage.getItem('ytdl-gui-lang') || getSystemLanguage();
+  // Always default to English on first launch — user can change in onboarding
+  return localStorage.getItem('ytdl-gui-lang') || 'en';
 }
 
 const I18nContext = createContext(null);

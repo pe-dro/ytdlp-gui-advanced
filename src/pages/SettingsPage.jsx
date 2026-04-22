@@ -1,12 +1,14 @@
-import { RefreshCw, CheckCircle, Download, Cpu, Info, Globe } from 'lucide-react';
+import { RefreshCw, CheckCircle, Download, Cpu, Info, Globe, Sun, Moon, Palette } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { useI18n, LANGUAGE_OPTIONS } from '../i18n/index';
+import { useTheme } from '../context/ThemeContext';
 import Section from '../components/Section';
 
 export default function SettingsPage() {
   const { state, actions } = useApp();
   const { binary } = state;
   const { t, lang, setLang } = useI18n();
+  const { theme, setTheme } = useTheme();
 
   return (
     <div className="max-w-2xl mx-auto space-y-4">
@@ -65,6 +67,36 @@ export default function SettingsPage() {
               </div>
             </div>
           )}
+        </div>
+      </Section>
+
+      {/* ── Theme ── */}
+      <Section title="Theme" icon={Palette} defaultOpen>
+        <div className="flex gap-3">
+          {[
+            { id: 'dark', icon: Moon, label: 'Dark Mode', desc: 'Dark background, easy on the eyes' },
+            { id: 'light', icon: Sun, label: 'Light Mode', desc: 'Bright and clean interface' },
+          ].map(({ id, icon: Icon, label, desc }) => (
+            <button
+              key={id}
+              id={`theme-${id}`}
+              onClick={() => setTheme(id)}
+              className={`flex-1 flex items-center gap-3 p-4 rounded-xl text-left transition-all duration-200
+                ${theme === id
+                  ? 'bg-accent-600/20 border-2 border-accent-500/50 text-white'
+                  : 'glass-sm hover:border-surface-600/60 text-surface-300 hover:text-white'
+                }`}
+            >
+              <span className={`p-2 rounded-lg ${theme === id ? 'bg-accent-600/30' : 'bg-surface-800/60'}`}>
+                <Icon size={18} className={theme === id ? 'text-accent-400' : 'text-surface-400'} />
+              </span>
+              <div>
+                <p className="text-sm font-semibold">{label}</p>
+                <p className="text-xs text-surface-400 mt-0.5">{desc}</p>
+              </div>
+              {theme === id && <CheckCircle size={16} className="ml-auto text-accent-400 shrink-0" />}
+            </button>
+          ))}
         </div>
       </Section>
 

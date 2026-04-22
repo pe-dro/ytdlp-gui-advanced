@@ -341,8 +341,12 @@ function registerIPC(win) {
   // Open path in explorer
   ipcMain.handle('shell:openPath', (_e, p) => shell.openPath(p));
 
-  // Get default download dir
-  ipcMain.handle('app:getDownloadsDir', () => app.getPath('downloads'));
+  // Get default download dir (ytdl-gui subfolder)
+  ipcMain.handle('app:getDownloadsDir', () => {
+    const dir = path.join(app.getPath('downloads'), 'ytdl-gui');
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    return dir;
+  });
 
   // Build & preview command
   ipcMain.handle('download:buildCommand', (_e, config) => {
@@ -391,7 +395,20 @@ function createWindow() {
   return win;
 }
 
+// ─── Auto-create required directories ─────────────────────────────────────────
+function ensureDirectories() {
+  const binDir = getBinaryDir();
+  if (!fs.existsSync(binDir)) fs.mkdirSync(binDir, { recursive: true });
+
+  // Create default output dir inside user's Downloads
+  const outputDir = path.join(app.getPath('downloads'), 'ytdl-gui');
+  if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
+
+  return { binDir, outputDir };
+}
+
 app.whenReady().then(() => {
+  ensureDirectories();
   createWindow();
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();

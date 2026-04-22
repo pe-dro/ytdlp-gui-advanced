@@ -122,4 +122,182 @@
   .console-line {
     @apply font-mono text-xs leading-5;
   }
+
+  /* ── Popover card ── */
+  .popover-card {
+    @apply bg-surface-800 border border-surface-600/60 rounded-xl p-4 shadow-2xl shadow-black/50;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   LIGHT THEME OVERRIDES
+   Applied via [data-theme="light"] on <html>
+   ═══════════════════════════════════════════════════════════════════════════════ */
+[data-theme="light"] {
+  /* ── Body background ── */
+  --tw-bg-opacity: 1;
+}
+[data-theme="light"] body,
+[data-theme="light"] #root {
+  background-color: #f0f2f5 !important;
+  color: #1a1a2e !important;
+}
+
+/* ── Sidebar ── */
+[data-theme="light"] aside {
+  background-color: #ffffff !important;
+  border-color: #e2e4ea !important;
+}
+[data-theme="light"] aside button {
+  color: #6b7280 !important;
+}
+[data-theme="light"] aside button:hover {
+  color: #1a1a2e !important;
+  background-color: #f0f2f5 !important;
+}
+[data-theme="light"] aside button[class*="bg-accent"] {
+  background-color: rgba(59, 130, 246, 0.1) !important;
+  color: #3b82f6 !important;
+}
+
+/* ── Title bar ── */
+[data-theme="light"] .titlebar-drag {
+  background-color: #ffffff !important;
+}
+[data-theme="light"] header {
+  background-color: #ffffff !important;
+  border-color: #e2e4ea !important;
+}
+
+/* ── Banner ── */
+[data-theme="light"] [class*="bg-surface-950"] {
+  background-color: #f8f9fa !important;
+}
+
+/* ── Glass cards ── */
+[data-theme="light"] .glass {
+  background-color: rgba(255, 255, 255, 0.85) !important;
+  border-color: #e2e4ea !important;
+  backdrop-filter: blur(8px);
+}
+[data-theme="light"] .glass-sm {
+  background-color: rgba(255, 255, 255, 0.7) !important;
+  border-color: #e8eaef !important;
+}
+
+/* ── Popover ── */
+[data-theme="light"] .popover-card {
+  background-color: #ffffff !important;
+  border-color: #e2e4ea !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12) !important;
+}
+
+/* ── Inputs ── */
+[data-theme="light"] .input {
+  background-color: #f8f9fa !important;
+  border-color: #d1d5db !important;
+  color: #1a1a2e !important;
+}
+[data-theme="light"] .input::placeholder {
+  color: #9ca3af !important;
+}
+[data-theme="light"] .input:hover {
+  border-color: #9ca3af !important;
+}
+[data-theme="light"] .input:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15) !important;
+}
+
+/* ── Buttons ── */
+[data-theme="light"] .btn-secondary {
+  background-color: #e5e7eb !important;
+  color: #374151 !important;
+}
+[data-theme="light"] .btn-secondary:hover {
+  background-color: #d1d5db !important;
+}
+[data-theme="light"] .btn-ghost {
+  color: #6b7280 !important;
+}
+[data-theme="light"] .btn-ghost:hover {
+  background-color: #f0f1f3 !important;
+  color: #1a1a2e !important;
+}
+
+/* ── Section headers ── */
+[data-theme="light"] .section-header {
+  color: #1a1a2e !important;
+}
+[data-theme="light"] .section-header:hover {
+  background-color: #f0f2f5 !important;
+}
+
+/* ── Text overrides ── */
+[data-theme="light"] h1,
+[data-theme="light"] h2,
+[data-theme="light"] h3,
+[data-theme="light"] h4 {
+  color: #1a1a2e !important;
+}
+[data-theme="light"] p,
+[data-theme="light"] span,
+[data-theme="light"] label {
+  color: inherit;
+}
+[data-theme="light"] [class*="text-white"] {
+  color: #1a1a2e !important;
+}
+[data-theme="light"] [class*="text-surface-200"],
+[data-theme="light"] [class*="text-surface-300"] {
+  color: #374151 !important;
+}
+[data-theme="light"] [class*="text-surface-400"],
+[data-theme="light"] [class*="text-surface-500"] {
+  color: #6b7280 !important;
+}
+[data-theme="light"] [class*="text-surface-600"],
+[data-theme="light"] [class*="text-surface-700"] {
+  color: #9ca3af !important;
+}
+
+/* ── Progress bar ── */
+[data-theme="light"] .progress-bar {
+  background-color: #e5e7eb !important;
+}
+
+/* ── Badge ── */
+[data-theme="light"] .badge-green {
+  background-color: rgba(34, 197, 94, 0.1) !important;
+  border-color: rgba(34, 197, 94, 0.25) !important;
+}
+[data-theme="light"] .badge-red {
+  background-color: rgba(239, 68, 68, 0.1) !important;
+  border-color: rgba(239, 68, 68, 0.25) !important;
+}
+
+/* ── Console ── */
+[data-theme="light"] [class*="bg-surface-950/90"],
+[data-theme="light"] [class*="bg-surface-900/90"] {
+  background-color: #1e1e2e !important;
+  color: #e0e0e0 !important;
+}
+
+/* ── Scrollbar ── */
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: #c1c5cc;
+}
+[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+  background: #a8adb6;
+}
+
+/* ── Borders ── */
+[data-theme="light"] [class*="border-surface-700"],
+[data-theme="light"] [class*="border-surface-800"] {
+  border-color: #e2e4ea !important;
+}
+
+/* ── Welcome overlay ── */
+[data-theme="light"] .fixed[class*="bg-surface-950"] {
+  background-color: rgba(240, 242, 245, 0.95) !important;
 }

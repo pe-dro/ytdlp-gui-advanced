@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { AppProvider } from './context/AppContext';
 import { I18nProvider } from './i18n/index';
+import { ThemeProvider } from './context/ThemeContext';
 import TitleBar from './components/TitleBar';
 import Sidebar from './components/Sidebar';
 import DownloaderPage from './pages/DownloaderPage';
@@ -45,10 +46,12 @@ function Layout() {
 
 export default function App() {
   return (
-    <I18nProvider>
-      <AppProvider>
-        <Layout />
-      </AppProvider>
-    </I18nProvider>
+    <ThemeProvider>
+      <I18nProvider>
+        <AppProvider>
+          <Layout />
+        </AppProvider>
+      </I18nProvider>
+    </ThemeProvider>
   );
 }
