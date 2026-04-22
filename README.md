@@ -17,6 +17,14 @@
 
 ---
 
+<p align="center">
+  <img src="assets/screenshot-dark.png" alt="Dark Theme" width="49%" />
+  <img src="assets/screenshot-light.png" alt="Light Theme" width="49%" />
+</p>
+<p align="center"><sub>Dark mode (left) &nbsp;·&nbsp; Light mode (right)</sub></p>
+
+---
+
 ## ✨ Features
 
 | Category | Details |
