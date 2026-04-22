@@ -1,4 +1,4 @@
-# ytdl-gui
+# ytdlp-gui-advanced
 
 > A premium desktop GUI for [yt-dlp](https://github.com/yt-dlp/yt-dlp) — download videos and audio from 1000+ sites.
 
