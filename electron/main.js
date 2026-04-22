@@ -10,16 +10,17 @@ const isDev = process.env.NODE_ENV === 'development';
 // ─── ffmpeg Resolution ────────────────────────────────────────────────────────
 function getFfmpegPath() {
   if (isDev) {
-    // In dev: use ffmpeg-static from node_modules
-    try {
-      return require('ffmpeg-static');
-    } catch {
-      return null;
-    }
+    try { return require('ffmpeg-static'); } catch { return null; }
   }
-  // In production: ffmpeg is copied to resources/ffmpeg/
+  // In production: ffmpeg-static is asar-unpacked alongside the app
   const ext = process.platform === 'win32' ? '.exe' : '';
-  const p = path.join(process.resourcesPath, 'ffmpeg', `ffmpeg${ext}`);
+  const p = path.join(
+    process.resourcesPath,
+    'app.asar.unpacked',
+    'node_modules',
+    'ffmpeg-static',
+    `ffmpeg${ext}`
+  );
   return fs.existsSync(p) ? p : null;
 }
 

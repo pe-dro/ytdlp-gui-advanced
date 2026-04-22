@@ -5,6 +5,11 @@
   "main": "electron/main.js",
   "author": "ytdl-gui contributors",
   "license": "MIT",
+  "homepage": "https://github.com/pedroespecialista/ytdl-gui",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pedroespecialista/ytdl-gui.git"
+  },
   "scripts": {
     "dev": "concurrently -k -n VITE,ELECTRON -c cyan,yellow \"vite\" \"wait-on http://localhost:5173 && cross-env NODE_ENV=development electron .\"",
     "build": "vite build",
@@ -24,13 +29,15 @@
         "from": "binaries/",
         "to": "binaries/",
         "filter": ["**/*"]
-      },
-      {
-        "from": "node_modules/ffmpeg-static/ffmpeg.exe",
-        "to": "ffmpeg/ffmpeg.exe",
-        "filter": ["**/*"]
       }
     ],
+    "asarUnpack": [
+      "node_modules/ffmpeg-static/**"
+    ],
+    "publish": {
+      "provider": "github",
+      "releaseType": "release"
+    },
     "win": {
       "target": [
         {

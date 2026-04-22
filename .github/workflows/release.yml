@@ -1,0 +1,202 @@
+name: Build & Release
+
+on:
+  push:
+    tags:
+      - 'v*'        # Dispara em: v1.0.0, v1.2.3, etc.
+  workflow_dispatch:  # Permite rodar manualmente pelo GitHub
+
+permissions:
+  contents: write   # Necessário para criar releases
+
+jobs:
+  # ──────────────────────────────────────────────────────────────────────────
+  # Windows — Portable .exe
+  # ──────────────────────────────────────────────────────────────────────────
+  build-windows:
+    name: 🪟 Windows (Portable)
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Extract version
+        id: version
+        shell: bash
+        run: echo "VERSION=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
+
+      # Pre-populate winCodeSign cache to avoid symlink permission issues on Windows
+      - name: Fix winCodeSign cache (symlink workaround)
+        shell: pwsh
+        run: |
+          $cacheDir = "$env:LOCALAPPDATA\electron-builder\Cache\winCodeSign"
+          $version  = "winCodeSign-2.6.0"
+          $url      = "https://github.com/electron-userland/electron-builder-binaries/releases/download/$version/$version.7z"
+          $archive  = "$cacheDir\$version.7z"
+          $dest     = "$cacheDir\$version"
+          New-Item -ItemType Directory -Force -Path $dest | Out-Null
+          Invoke-WebRequest -Uri $url -OutFile $archive -UseBasicParsing
+          $7za = "$env:GITHUB_WORKSPACE\node_modules\7zip-bin\win\x64\7za.exe"
+          & $7za x -y "$archive" "-o$dest" | Out-Null
+          # Create dummy symlink targets if missing
+          @("$dest\darwin\10.12\lib\libcrypto.dylib","$dest\darwin\10.12\lib\libssl.dylib") | ForEach-Object {
+            if (-not (Test-Path $_)) {
+              New-Item -ItemType File -Force -Path $_ | Out-Null
+            }
+          }
+
+      - name: Build Vite
+        run: npm run build
+
+      - name: Package Windows Portable
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: false
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx electron-builder --win --x64 --publish never
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ytdl-gui-windows
+          path: out/*.exe
+          retention-days: 7
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # Linux — AppImage
+  # ──────────────────────────────────────────────────────────────────────────
+  build-linux:
+    name: 🐧 Linux (AppImage)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y fuse libfuse2 rpm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Vite
+        run: npm run build
+
+      - name: Package Linux AppImage
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx electron-builder --linux AppImage --x64 --publish never
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ytdl-gui-linux
+          path: out/*.AppImage
+          retention-days: 7
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # macOS — DMG (Intel + Apple Silicon)
+  # ──────────────────────────────────────────────────────────────────────────
+  build-macos:
+    name: 🍎 macOS (DMG)
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Vite
+        run: npm run build
+
+      - name: Package macOS DMG
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: false
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx electron-builder --mac dmg --x64 --arm64 --publish never
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ytdl-gui-macos
+          path: out/*.dmg
+          retention-days: 7
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # Release — cria o GitHub Release e sobe todos os binários
+  # ──────────────────────────────────────────────────────────────────────────
+  release:
+    name: 🚀 Publish GitHub Release
+    needs: [build-windows, build-linux, build-macos]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+
+      - name: List release assets
+        run: find release-assets -type f | sort
+
+      - name: Extract changelog for this tag
+        id: changelog
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ytdl-gui ${{ github.ref_name }}
+          draft: false
+          prerelease: ${{ contains(github.ref_name, '-beta') || contains(github.ref_name, '-alpha') || contains(github.ref_name, '-rc') }}
+          body: |
+            ## ytdl-gui ${{ github.ref_name }}
+
+            ### 📥 Downloads
+            | Platform | File | Description |
+            |---|---|---|
+            | 🪟 Windows | `ytdl-gui-*-x64.exe` | Portable — no install needed |
+            | 🐧 Linux   | `ytdl-gui-*.AppImage` | AppImage — run directly |
+            | 🍎 macOS   | `ytdl-gui-*.dmg` | DMG — drag to Applications |
+
+            ### ℹ️ First run
+            On first launch, ytdl-gui will automatically download the latest **yt-dlp** binary.
+            **ffmpeg** is bundled with the app — no separate installation required.
+
+            ### 🌐 Supported languages
+            🇺🇸 EN · 🇧🇷 PT · 🇪🇸 ES · 🇫🇷 FR · 🇩🇪 DE · 🇮🇹 IT · 🇨🇳 ZH · 🇯🇵 JA · 🇷🇺 RU · 🇸🇦 AR
+
+            ---
+            > **Note:** Windows and macOS builds are unsigned. You may need to allow the app in your security settings.
+          files: |
+            release-assets/**/*.exe
+            release-assets/**/*.AppImage
+            release-assets/**/*.dmg
