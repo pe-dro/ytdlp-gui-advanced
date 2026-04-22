@@ -31,14 +31,14 @@ function Layout() {
       {showWelcome && <WelcomeScreen onDone={() => setShowWelcome(false)} />}
       <TitleBar />
       <BinaryBanner />
-      <div className="flex flex-1 overflow-hidden">
-        <Sidebar />
-        <main className="flex-1 overflow-hidden flex flex-col">
-          <div className="flex-1 overflow-y-auto p-6 animate-fade-in">
+      <div className="flex flex-col sm:flex-row flex-1 overflow-hidden">
+        <main className="flex-1 overflow-hidden flex flex-col order-first sm:order-none">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 animate-fade-in pb-8 sm:pb-6">
             {pages[state.activeTab] || <DownloaderPage />}
           </div>
           <Console />
         </main>
+        <Sidebar />
       </div>
     </div>
   );

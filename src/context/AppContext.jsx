@@ -114,6 +114,22 @@ export function AppProvider({ children }) {
 
   // ── Binary init ──
   useEffect(() => {
+    if (Capacitor.isNativePlatform()) {
+      dispatch({ 
+        type: 'SET_BINARY', 
+        payload: { 
+          exists: true, 
+          checking: false, 
+          ffmpegExists: true,
+          localVersion: 'native',
+          needsUpdate: false
+        } 
+      });
+      // Default to public Downloads on Android
+      dispatch({ type: 'SET_CONFIG', payload: { outputDir: '/storage/emulated/0/Download/ytdl-gui' } });
+      return;
+    }
+
     const api = window.electronAPI;
     if (!api) return;
 
