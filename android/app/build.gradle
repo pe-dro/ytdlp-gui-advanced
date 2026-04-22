@@ -40,6 +40,10 @@ dependencies {
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
     implementation project(':capacitor-cordova-android-plugins')
+
+    // yt-dlp and ffmpeg native wrapper for Android
+    implementation 'com.github.junkfood02.youtubedl-android:library:0.17.0'
+    implementation 'com.github.junkfood02.youtubedl-android:ffmpeg:0.17.0'
 }
 
 apply from: 'capacitor.build.gradle'

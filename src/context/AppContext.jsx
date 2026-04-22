@@ -1,4 +1,5 @@
 import { createContext, useContext, useReducer, useCallback, useRef, useEffect, useState } from 'react';
+import { Capacitor } from '@capacitor/core';
 
 // ─── State Shape ──────────────────────────────────────────────────────────────
 const initialState = {
@@ -205,6 +206,33 @@ export function AppProvider({ children }) {
     };
   }, [addLog]);
 
+  // ── Native Download event listeners ──
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return;
+    
+    const { YtDlpNative } = Capacitor.Plugins;
+    if (!YtDlpNative) return;
+
+    let listenerHandle = null;
+    YtDlpNative.addListener('downloadProgress', ({ id, progress, eta, line }) => {
+      if (line) addLog(line, 'info');
+      dispatch({
+        type: 'QUEUE_UPDATE',
+        payload: {
+          id,
+          percent: progress,
+          speed: '',
+          eta: eta ? String(eta) + 's' : '',
+          status: progress >= 100 ? 'processing' : 'downloading',
+        },
+      });
+    }).then(handle => { listenerHandle = handle; });
+
+    return () => {
+      if (listenerHandle) listenerHandle.remove();
+    };
+  }, [addLog]);
+
   // ── Actions ──
   const actions = {
     setConfig: (payload) => dispatch({ type: 'SET_CONFIG', payload }),
@@ -244,13 +272,47 @@ export function AppProvider({ children }) {
       dispatch({ type: 'QUEUE_ADD', payload: item });
       addLog(`[ytdl-gui] Starting download: ${config.url}`, 'info');
 
-      const result = await window.electronAPI.downloadStart({ id, config });
-      if (!result.success) {
-        addLog(`[ytdl-gui] Failed to start: ${result.error}`, 'error');
-        dispatch({ type: 'QUEUE_UPDATE', payload: { id, status: 'error' } });
-      } else {
+      if (Capacitor.isNativePlatform()) {
+        const { YtDlpNative } = Capacitor.Plugins;
+        if (!YtDlpNative) {
+          addLog(`[ytdl-gui] Native plugin not found`, 'error');
+          dispatch({ type: 'QUEUE_UPDATE', payload: { id, status: 'error' } });
+          return;
+        }
+
         dispatch({ type: 'QUEUE_UPDATE', payload: { id, status: 'downloading' } });
-        addLog(`[ytdl-gui] Command: yt-dlp ${result.args.join(' ')}`, 'cmd');
+        addLog(`[ytdl-gui] Command: yt-dlp native (Android)`, 'cmd');
+
+        try {
+          const extraOptions = {
+            subtitles: config.embedSubs,
+            thumbnail: config.embedThumbnail,
+            chapters: config.embedChapters,
+            metadata: config.embedMetadata
+          };
+          
+          await YtDlpNative.execute({
+            id,
+            url: config.url,
+            format: config.format,
+            extraOptions
+          });
+          
+          addLog(`[ytdl-gui] Download ${id} completed`, 'success');
+          dispatch({ type: 'QUEUE_UPDATE', payload: { id, status: 'done', percent: 100 } });
+        } catch (error) {
+          addLog(`[ytdl-gui] Failed to start native download: ${error.message || error}`, 'error');
+          dispatch({ type: 'QUEUE_UPDATE', payload: { id, status: 'error' } });
+        }
+      } else {
+        const result = await window.electronAPI.downloadStart({ id, config });
+        if (!result.success) {
+          addLog(`[ytdl-gui] Failed to start: ${result.error}`, 'error');
+          dispatch({ type: 'QUEUE_UPDATE', payload: { id, status: 'error' } });
+        } else {
+          dispatch({ type: 'QUEUE_UPDATE', payload: { id, status: 'downloading' } });
+          addLog(`[ytdl-gui] Command: yt-dlp ${result.args.join(' ')}`, 'cmd');
+        }
       }
     },
 
