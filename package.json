@@ -5,10 +5,10 @@
   "main": "electron/main.js",
   "author": "ytdl-gui contributors",
   "license": "MIT",
-  "homepage": "https://github.com/pedroespecialista/ytdl-gui",
+  "homepage": "https://github.com/pe-dro/ytdl-gui",
   "repository": {
     "type": "git",
-    "url": "https://github.com/pedroespecialista/ytdl-gui.git"
+    "url": "https://github.com/pe-dro/ytdl-gui.git"
   },
   "scripts": {
     "dev": "concurrently -k -n VITE,ELECTRON -c cyan,yellow \"vite\" \"wait-on http://localhost:5173 && cross-env NODE_ENV=development electron .\"",
