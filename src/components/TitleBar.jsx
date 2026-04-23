@@ -1,9 +1,6 @@
 import { Minus, Square, X } from 'lucide-react';
-import { Capacitor } from '@capacitor/core';
 
 export default function TitleBar() {
-  if (Capacitor.isNativePlatform()) return null;
-
   return (
     <div className="titlebar-drag h-10 flex items-center justify-between px-4 bg-surface-950/95 border-b border-surface-800/50 shrink-0 z-50">
       <div className="titlebar-no-drag flex items-center gap-2.5">

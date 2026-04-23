@@ -18,7 +18,7 @@ export default function Sidebar() {
   const queueActive = state.queue.filter(i => i.status === 'downloading' || i.status === 'queued').length;
 
   return (
-    <aside className="w-full sm:w-[72px] flex flex-row sm:flex-col items-center justify-around sm:justify-start py-2 sm:py-4 px-2 sm:px-0 gap-1 bg-surface-950 border-t sm:border-t-0 sm:border-r border-surface-800/50 shrink-0 z-50 order-last sm:order-first">
+    <aside className="w-[72px] flex flex-col items-center py-4 gap-1 bg-surface-950 border-r border-surface-800/50 shrink-0">
       {NAV.map(({ id, icon: Icon, labelKey }) => {
         const active = state.activeTab === id;
         const label = t(labelKey);
@@ -44,16 +44,13 @@ export default function Sidebar() {
               </span>
             )}
             {active && (
-              <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-6 bg-accent-500 rounded-r-full sm:block hidden" />
-            )}
-            {active && (
-              <span className="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-6 bg-accent-500 rounded-t-full sm:hidden block" />
+              <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-6 bg-accent-500 rounded-r-full" />
             )}
           </button>
         );
       })}
 
-      <div className="hidden sm:block flex-1" />
+      <div className="flex-1" />
 
       {/* Theme toggle */}
       <button

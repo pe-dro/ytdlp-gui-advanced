@@ -11,7 +11,7 @@
 <p align="center">
   <img src="https://img.shields.io/github/v/release/pe-dro/ytdlp-gui-advanced?style=flat-square&color=blue" alt="release" />
   <img src="https://img.shields.io/github/license/pe-dro/ytdlp-gui-advanced?style=flat-square" alt="license" />
-  <img src="https://img.shields.io/badge/platforms-Windows%20%7C%20Linux%20%7C%20macOS%20%7C%20Android-brightgreen?style=flat-square" alt="platforms" />
+  <img src="https://img.shields.io/badge/platforms-Windows%20%7C%20Linux%20%7C%20macOS-brightgreen?style=flat-square" alt="platforms" />
   <img src="https://img.shields.io/badge/languages-10-orange?style=flat-square" alt="languages" />
 </p>
 
@@ -39,7 +39,6 @@
 | ☀️🌙 **Dark & light themes** | Toggle between dark and light mode from the sidebar |
 | ❓ **In-app help** | Every field has a popover explaining what it does, plus a searchable supported-sites list |
 | 🎉 **Guided onboarding** | First-run welcome screen with feature overview, dependency setup, and language picker |
-| 📱 **Android APK** | Mobile build via Capacitor (WebView) |
 
 ---
 
@@ -53,7 +52,6 @@ Grab the latest release for your platform:
 | 🐧 Linux | `ytdl-gui-*.AppImage` | AppImage — run directly |
 | 🍎 macOS (Intel) | `ytdl-gui-*.dmg` | DMG — drag to Applications |
 | 🍎 macOS (Apple Silicon) | `ytdl-gui-*-arm64.dmg` | DMG — native ARM build |
-| 📱 Android | `ytdl-gui-*-android.apk` | APK — sideload |
 
 👉 **[Latest Release](https://github.com/pe-dro/ytdlp-gui-advanced/releases/latest)**
 
@@ -106,22 +104,9 @@ npm run dist:linux
 
 # macOS DMG
 npm run dist:mac
-
-# Android APK (requires Android SDK)
-npm run dist:android
 ```
 
-### Capacitor (Mobile)
-
-```bash
-# Build web assets + sync with Android project
-npm run cap:sync
-
-# Open in Android Studio
-npm run cap:android
-```
-
-Outputs go to the `out/` directory (desktop) or `android/app/build/outputs/apk/` (Android).
+Outputs go to the `out/` directory.
 
 ---
 
@@ -157,12 +142,9 @@ ytdlp-gui-advanced/
 │   ├── App.jsx               # Root layout + providers
 │   ├── main.jsx              # React entry point
 │   └── index.css             # Design system + light theme overrides
-├── android/                  # Capacitor Android project
 ├── .github/workflows/
 │   ├── release.yml           # CI: build Win/Linux/macOS + GitHub Release
-│   ├── android.yml           # CI: build Android APK
 │   └── ci.yml                # CI: lint & build check on push/PR
-├── capacitor.config.json     # Capacitor config for mobile
 ├── vite.config.js
 ├── tailwind.config.js
 └── package.json
@@ -178,7 +160,6 @@ ytdlp-gui-advanced/
 | UI framework | React 19 |
 | Styling | Tailwind CSS 3 |
 | Build tool | Vite 6 |
-| Mobile | Capacitor 7 + Android |
 | Download engine | yt-dlp (auto-managed) |
 | Audio/video processing | ffmpeg-static (bundled) |
 | CI/CD | GitHub Actions |
@@ -208,10 +189,9 @@ git tag v1.2.0 && git push origin v1.2.0
 tag pushed → 3 parallel workflows
 ├── 🪟 windows-latest → portable .exe (x64)
 ├── 🐧 ubuntu-latest  → AppImage (x64)
-├── 🍎 macos-latest   → DMG (x64 + arm64)
-└── 📱 ubuntu-latest  → APK (Capacitor + Gradle)
+└── 🍎 macos-latest   → DMG (x64 + arm64)
          ↓
-   🚀 GitHub Release with all 5 binaries
+   🚀 GitHub Release with all binaries
 ```
 
 ---
