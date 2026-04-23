@@ -1,6 +1,6 @@
 {
   "name": "ytdl-gui",
-  "version": "1.0.0",
+  "version": "1.1.1",
   "description": "A premium GUI for yt-dlp — download videos from 1000+ sites",
   "main": "electron/main.js",
   "author": "ytdl-gui contributors",

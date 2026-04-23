@@ -12,11 +12,21 @@ const TYPE_COLORS = {
 
 export default function Console() {
   const { state, actions } = useApp();
+  const scrollRef = useRef(null);
   const bottomRef = useRef(null);
+  const isAutoScroll = useRef(true);
+
+  const handleScroll = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    // Check if scrolled near the bottom (within 30px)
+    isAutoScroll.current = el.scrollHeight - el.scrollTop - el.clientHeight < 30;
+  };
 
   useEffect(() => {
-    if (state.consoleOpen && bottomRef.current) {
-      bottomRef.current.scrollIntoView({ behavior: 'smooth' });
+    if (state.consoleOpen && isAutoScroll.current && bottomRef.current) {
+      // Use "auto" instead of smooth so it doesn't bounce when spammed
+      bottomRef.current.scrollIntoView({ behavior: 'auto' });
     }
   }, [state.consoleLogs, state.consoleOpen]);
 
@@ -60,7 +70,11 @@ export default function Console() {
 
       {/* Log area */}
       {state.consoleOpen && (
-        <div className="flex-1 overflow-y-auto px-3 py-2 font-mono space-y-0.5">
+        <div 
+          ref={scrollRef}
+          onScroll={handleScroll}
+          className="flex-1 overflow-y-auto px-3 py-2 font-mono space-y-0.5"
+        >
           {state.consoleLogs.length === 0 ? (
             <p className="text-surface-600 text-xs italic">No output yet…</p>
           ) : (
