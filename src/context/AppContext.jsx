@@ -1,5 +1,8 @@
 import { createContext, useContext, useReducer, useCallback, useRef, useEffect, useState } from 'react';
-import { Capacitor } from '@capacitor/core';
+import { Capacitor, registerPlugin } from '@capacitor/core';
+
+// Registrar o plugin nativo localmente (como não é um pacote npm, precisa ser registrado manualmente no JS)
+const YtDlpNative = registerPlugin('YtDlpNative');
 
 // ─── State Shape ──────────────────────────────────────────────────────────────
 const initialState = {
@@ -226,7 +229,6 @@ export function AppProvider({ children }) {
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) return;
     
-    const { YtDlpNative } = Capacitor.Plugins;
     if (!YtDlpNative) return;
 
     let listenerHandle = null;
@@ -289,7 +291,6 @@ export function AppProvider({ children }) {
       addLog(`[ytdl-gui] Starting download: ${config.url}`, 'info');
 
       if (Capacitor.isNativePlatform()) {
-        const { YtDlpNative } = Capacitor.Plugins;
         if (!YtDlpNative) {
           addLog(`[ytdl-gui] Native plugin not found`, 'error');
           dispatch({ type: 'QUEUE_UPDATE', payload: { id, status: 'error' } });
